@@ -23,6 +23,16 @@ const htmlTemplate = `
         }
     </style>
     <script>
+    let isPaused = false;  // Variable to check if the display is paused
+
+    function togglePause() {
+        isPaused = !isPaused;  // Toggle the paused state
+
+        if (!isPaused) {
+            showWord();  // If it's not paused anymore, continue displaying words
+        }
+    }
+
     function displayWords() {
         const inputText = document.getElementById('inputText').value;
         const words = inputText.split(/\s+/);
@@ -31,7 +41,7 @@ const htmlTemplate = `
         let index = 0;
 
         function showWord() {
-            if (index < words.length) {
+            if (index < words.length && !isPaused) {
                 displayElement.innerText = words[index];
                 let delay = speed;
                 if (words[index].endsWith('.') || words[index].endsWith('?') || words[index].endsWith(',') || words[index].endsWith('!') ||
@@ -40,6 +50,8 @@ const htmlTemplate = `
                 }
                 index++;
                 setTimeout(showWord, delay);
+            } else if (isPaused) {
+                setTimeout(showWord, 500);  // If it's paused, check again after 500ms
             }
         }
         
@@ -52,6 +64,7 @@ const htmlTemplate = `
         <textarea id="inputText" rows="4" cols="50"></textarea><br>
         Words per minute: <input type="number" id="wpm" value="350"><br>
         <button onclick="displayWords()">Submit</button>
+        <button onclick="togglePause()">Pause</button>
     </div>
 	<div id="display" style="font-size: 48px; margin-top: 20px; " ></div>
 </body>
